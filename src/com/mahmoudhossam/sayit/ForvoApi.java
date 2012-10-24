@@ -26,24 +26,32 @@ public class ForvoApi {
 		return String.format(format, apiKey, action, word);
 	}
 
-	public String get_std_pronouncation(String word)
-			throws MalformedURLException, IOException {
+	public String get_std_pronouncation(String word) {
 		String url = buildRequestURL(STANDARD_PRONOUNCIATION, word);
 		return executeRequest(url);
 	}
 
-	private String executeRequest(String requestURL)
-			throws MalformedURLException, IOException {
-		URL url = new URL(requestURL);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		StringBuilder builder = new StringBuilder();
+	private String executeRequest(String requestURL) {
+		URL url = null;
 		try {
+			url = new URL(requestURL);
+		} catch (MalformedURLException e1) {
+			System.err.println(e1.getMessage());
+		}
+		HttpURLConnection conn = null;
+		StringBuilder builder = null;
+		try {
+			conn = (HttpURLConnection) url.openConnection();
+			builder = new StringBuilder();
+
 			InputStream in = new BufferedInputStream(conn.getInputStream());
 			BufferedReader reader = new BufferedReader(
 					new InputStreamReader(in));
 			while (reader.ready()) {
 				builder.append(reader.readLine() + "\n");
 			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
 		} finally {
 			conn.disconnect();
 		}
